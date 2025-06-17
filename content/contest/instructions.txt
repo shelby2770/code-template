@@ -1,0 +1,19 @@
+1. vi .bashrc: export PATH="$PATH:$HOME/cp"
+2. mkdir -p cp/bits/ && cd cp && vi cf (Type)
+3. chmod +x cf; restart terminal
+4. Type stdc++.h, template.cpp, hash.sh
+-------- Kate --------
+1. Go to Settings->Configure Kate.
+ 1. Editing->Default input mode->Vim
+ 2. Vi input mode->Insert mode->jk = <esc>
+ 3. Appearance->Turn off dynamic w.w.
+ 4. Color Themes->Gruvbox
+ 5. Terminal->Turn off hide console
+    (View->Tool Views->Show sidebars is on)
+2. Hotkey: Focus Terminal Panel=F4->"Reassign"
+-------- Windows --------
+1. Using cmd: echo %PATH%. Using Powershell: echo $env:PATH
+2. Add path using cmd: set PATH=%PATH%;C:\Program Files\CodeBlocks\MinGW\bin
+   It should be the directory where g++ is.
+3. If we're using g++ of CodeBlocks, fsanitize won't be available :(
+4. Write cf.bat at some directory. Ensure that directory is in PATH.

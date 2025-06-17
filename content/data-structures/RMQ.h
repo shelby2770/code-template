@@ -15,8 +15,8 @@
 
 template<class T>
 struct RMQ {
-	vector<vector<T>> jmp;
-	RMQ(const vector<T>& V) : jmp(1, V) {
+	V<V<T>> jmp;
+	RMQ(const V<T>& V) : jmp(1, V) {
 		for (int pw = 1, k = 1; pw * 2 <= sz(V); pw *= 2, ++k) {
 			jmp.emplace_back(sz(V) - pw * 2 + 1);
 			rep(j,0,sz(jmp[k]))
@@ -27,5 +27,4 @@ struct RMQ {
 		assert(a < b); // or return inf if a == b
 		int dep = 31 - __builtin_clz(b - a);
 		return min(jmp[dep][a], jmp[dep][b - (1 << dep)]);
-	}
-};
+} };
