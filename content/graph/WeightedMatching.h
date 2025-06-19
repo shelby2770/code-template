@@ -27,12 +27,15 @@ pair<int, vi> hungarian(const vector<vi> &a) {
 			done[j0] = true;
 			int i0 = p[j0], j1, delta = INT_MAX;
 			rep(j,1,m) if (!done[j]) {
-				auto cur = a[i0 - 1][j - 1] - u[i0] - v[j];
-				if (cur < dist[j]) dist[j] = cur, pre[j] = j0;
-				if (dist[j] < delta) delta = dist[j], j1 = j;
+				auto cur = a[i0-1][j-1] - u[i0]-v[j];
+				if (cur < dist[j]) 
+          dist[j] = cur, pre[j] = j0;
+				if (dist[j] < delta) 
+          delta = dist[j], j1 = j;
 			}
 			rep(j,0,m) {
-				if (done[j]) u[p[j]] += delta, v[j] -= delta;
+				if (done[j]) 
+          u[p[j]] += delta, v[j] -= delta;
 				else dist[j] -= delta;
 			}
 			j0 = j1;
