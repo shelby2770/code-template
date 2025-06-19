@@ -12,14 +12,12 @@ void fw_div_transform (V<ll> &a) {
     if (p > n) break;
     for (int i=1; i*p <= n; ++i) a[i*p]+=a[i];
 } } // A[i] = \sum_{d | i} a[d]
- 
 void bw_div_transform (V<ll> &a) {
   int n = sz(a) - 1;
   for (const auto p : pr) {
     if (p > n) break;
     for (int i=n/p; i>0; --i) a[i*p]-=a[i];
 } } // From A get a
-
 V<ll>lcm_conv (const V<ll>&a, const V<ll>&b){
   assert(sz(a) == sz(b)); int n = sz(a);
   auto A = a, B = b;

@@ -12,14 +12,12 @@ void fw_mul_transform (V<ll> &a) {
     if (p > n) break;
     for (int i = n/p; i>0; --i) a[i]+=a[i*p];
 } } // A[i] = \sum_{j} a[i * j]
-
 void bw_mul_transform (V<ll> &a) {
   int n = sz(a) - 1;
   for (const auto p : pr) {
     if (p > n) break;
     for (int i=1; i*p <= n; ++i) a[i]-=a[i*p];
 } } // From A get a
-
 V<ll>gcd_conv (const V<ll>&a, const V<ll>&b){
   assert(sz(a) == sz(b)); int n = sz(a);
   auto A = a, B = b;
