@@ -7,8 +7,8 @@
  * Description: fft(a) computes $\hat f(k) = \sum_x a[x] \exp(2\pi i \cdot k x / N)$ for all $k$. N must be a power of 2.
    Useful for convolution:
    \texttt{conv(a, b) = c}, where $c[x] = \sum a[i]b[x-i]$.
-   For convolution of complex numbers or more than two vectors: FFT, multiply
-   pointwise, divide by n, reverse(start+1, end), FFT back.
+   For convolution of complex numbers or more than two vectors: FFT each poly, multiply result
+   pointwise, divide by n, reverse(out.begin()+1,end), FFT back, then round(out[i].real()) or truncate out[i].imag(0).
    Rounding is safe if $(\sum a_i^2 + \sum b_i^2)\log_2{N} < 9\cdot10^{14}$
    (in practice $10^{16}$; higher for random inputs).
    Otherwise, use NTT/FFTMod.
@@ -35,24 +35,24 @@ void fft(vector<C>& a) {
 	rep(i,0,n) if (i < rev[i]) swap(a[i], a[rev[i]]);
 	for (int k = 1; k < n; k *= 2)
 		for (int i = 0; i < n; i += 2 * k) rep(j,0,k) {
-			// C z = rt[j+k] * a[i+j+k]; // (25% faster if hand-rolled)  /// include-line
-			auto x = (double *)&rt[j+k], y = (double *)&a[i+j+k];        /// exclude-line
-			C z(x[0]*y[0] - x[1]*y[1], x[0]*y[1] + x[1]*y[0]);           /// exclude-line
+			// C z = rt[j+k] * a[i+j+k]; // (25% faster if hand-rolled)  /// exclude-line
+			auto x = (double *)&rt[j+k], y = (double *)&a[i+j+k];
+			C z(x[0]*y[0] - x[1]*y[1], x[0]*y[1] + x[1]*y[0]);
 			a[i + j + k] = a[i + j] - z;
 			a[i + j] += z;
 		}
-}
+} // Use vector<C> when complex covolution
 vd conv(const vd& a, const vd& b) {
 	if (a.empty() || b.empty()) return {};
 	vd res(sz(a) + sz(b) - 1);
 	int L = 32 - __builtin_clz(sz(res)), n = 1 << L;
-	vector<C> in(n), out(n);
-	copy(all(a), begin(in));
-	rep(i,0,sz(b)) in[i].imag(b[i]);
-	fft(in);
-	for (C& x : in) x *= x;
-	rep(i,0,n) out[i] = in[-i & (n - 1)] - conj(in[i]);
+	vector<C> in(n), out(n); // create in2
+	copy(all(a), begin(in)); // copy(b) -> in2
+	rep(i,0,sz(b)) in[i].imag(b[i]); // skip
+	fft(in); // call extra fft for in2
+	for (C& x : in) x *= x; // out_i=in_i*in2_i
+	rep(i,0,n) out[i] = in[-i & (n - 1)] - conj(in[i]); // skip, rather divide by n
 	fft(out);
-	rep(i,0,sz(res)) res[i] = imag(out[i]) / (4 * n);
+	rep(i,0,sz(res)) res[i] = imag(out[i]) / (4 * n); // do rounding on out instead
 	return res;
 }
