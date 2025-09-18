@@ -1,0 +1,52 @@
+\kactlref{HashingIstiaque.h}
+\defdescription{Double hashing with both forward and reverse hash support.
+Uses random bases and two different moduli for collision resistance.
+Call pre_calc() before using HashedString.}
+\deftime{$\bigo{n}$ preprocessing, $\bigo{1}$ query}
+\rightcaption{034d9c, 44 lines}
+\begin{lstlisting}[caption={HashingIstiaque.h}, language=C++]
+random_device rd;
+mt19937 gen(rd());
+int range1 = 31, range2 = 1029;
+uniform_int_distribution<> distr(range1, range2);
+const int N = 2e6, M1 = 1e9 + 7, B1 = distr(gen), M2 = 998244353, B2 = distr(gen);
+vi p1{1}, p2{1};
+
+void pre_calc() {
+    for (int i = 1; i <= N; ++i) {
+        p1.push_back((p1.back() * B1) % M1);
+        p2.push_back((p2.back() * B2) % M2);
+    }
+}
+
+struct HashedString {
+    vi p_hash1, p_hash2, s_hash1, s_hash2;
+
+    HashedString(const string &s) {
+        p_hash1.resize(s.size() + 2);
+        p_hash2.resize(s.size() + 2);
+        s_hash1.resize(s.size() + 2);
+        s_hash2.resize(s.size() + 2);
+        for (int i = 0; i < s.size(); ++i) {
+            p_hash1[i + 1] = ((p_hash1[i] * B1) % M1 + s[i]) % M1;
+            p_hash2[i + 1] = ((p_hash2[i] * B2) % M2 + s[i]) % M2;
+        }
+        for (int i = s.size() - 1; i >= 0; --i) {
+            s_hash1[i + 1] = ((s_hash1[i + 2] * B1) % M1 + s[i]) % M1;
+            s_hash2[i + 1] = ((s_hash2[i + 2] * B2) % M2 + s[i]) % M2;
+        }
+    }
+
+    pii get_hash(int start, int end) {
+        int raw_val1 = (p_hash1[end + 1] - (p_hash1[start] * p1[end - start + 1]));
+        int raw_val2 = (p_hash2[end + 1] - (p_hash2[start] * p2[end - start + 1]));
+        return {(raw_val1 % M1 + M1) % M1, (raw_val2 % M2 + M2) % M2};
+    }
+
+    pii rev_hash(int start, int end) {
+        int raw_val1 = (s_hash1[start + 1] - (s_hash1[end + 2] * p1[end - start + 1]));
+        int raw_val2 = (s_hash2[start + 1] - (s_hash2[end + 2] * p2[end - start + 1]));
+        return {(raw_val1 % M1 + M1) % M1, (raw_val2 % M2 + M2) % M2};
+    }
+};
+\end{lstlisting}
