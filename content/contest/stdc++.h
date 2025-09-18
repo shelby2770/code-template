@@ -17,6 +17,18 @@ TT, typename V> void p1(const pair<T, V> &x) {
 }
 TT> constexpr void p1 (const T &x) {
   if constexpr (cerrok<T>::value) cerr << x;
+  else if constexpr (requires { std::declval<T&>().pop(); }) {
+    auto tmp = x;
+    int f = 0;
+    cerr << "{";
+    while (!tmp.empty()) {
+      cerr << (f++ ? ", " : "");
+      if constexpr (requires { tmp.top(); }) p1(tmp.top());    
+      else p1(tmp.front());
+      tmp.pop();
+    }
+    cerr << "}";
+  }
   else { int f = 0; cerr << '{';
     for (auto &i: x) 
       cerr << (f++ ? ", " : ""), p1(i);
@@ -29,6 +41,7 @@ TT, typename... V> void p2(T t, V... v) {
   p2(v...);
 }
 
-#ifdef DeBuG
-#define dbg(x...) {cerr << "\t\e[93m"<<__func__<<":"<<__LINE__<<" [" << #x << "] = ["; p2(x); cerr << "\e[0m";}
+#ifdef LOCAL
+#define debug(x...) {cerr <<__func__<<":"<<__LINE__<<" [" << #x << "] = ["; p2(x);}
+#define dbg(x, len) {cerr << __func__ << ":" << __LINE__<< " [" << #x << "] = {";for (int i = 0; i < (len); ++i) {if (i) cerr << ", ";p1((x)[i]);}cerr << "}\n";} 
 #endif

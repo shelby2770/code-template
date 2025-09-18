@@ -59,4 +59,4 @@ vi moTree(vector<array<int, 2>> Q, vector<vi>& ed, int root=0){
 		if (end) res[qi] = calc();
 	}
 	return res;
-}
+} 

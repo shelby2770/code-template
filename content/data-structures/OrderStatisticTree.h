@@ -10,8 +10,19 @@
  */
 #pragma once
 
-#include <bits/extc++.h> /** keep-include */
+#include <ext/pb_ds/assoc_container.hpp>
+#include <ext/pb_ds/tree_policy.hpp>
 using namespace __gnu_pbds;
+template <typename T>
+using ordered_set = tree<T, null_type, less<T>, rb_tree_tag, tree_order_statistics_node_update>;
+ordered_set<T> o;
+template <typename T, typename R>
+using o_map = tree<T, R, less<T>, rb_tree_tag, tree_order_statistics_node_update>;
+
+//for ordered multiset "upper_bound" and "lower_bound" are reversed
+//o.erase(--(o.lower_bound(v[i])))
+//order_of_key: The number of items in a set that are strictly smaller than k
+//find_by_order: It returns an iterator to the ith largest element
 
 template<class T> using Tree=tree<T, null_type, less<T>, rb_tree_tag, tree_order_statistics_node_update>;
 

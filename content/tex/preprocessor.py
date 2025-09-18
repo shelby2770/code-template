@@ -147,10 +147,15 @@ def processwithcomments(caption, instream, outstream, listingslang):
 
     if listingslang in ['C++', 'Java']:
         hash_script = 'hash'
-        p = subprocess.Popen(['sh', 'content/contest/%s.sh' % hash_script], stdin=subprocess.PIPE, stdout=subprocess.PIPE, encoding="utf-8")
-        hsh, _ = p.communicate(nsource)
-        hsh = hsh.split(None, 1)[0]
-        hsh = hsh + ', '
+        try:
+            p = subprocess.Popen(['sh', 'content/contest/%s.sh' % hash_script], stdin=subprocess.PIPE, stdout=subprocess.PIPE, encoding="utf-8")
+            hsh, _ = p.communicate(nsource)
+            hsh_parts = hsh.split(None, 1)
+            hsh = hsh_parts[0] if hsh_parts else "000000"
+            hsh = hsh + ', '
+        except:
+            # Fallback if hash command fails
+            hsh = "000000, "
     else:
         hsh = ''
     # Produce output

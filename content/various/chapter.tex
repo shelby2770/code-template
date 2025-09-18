@@ -1,5 +1,67 @@
 \chapter{Various}
 
+\section{Have you tried?}
+
+\begin{itemize}
+    \item \textcolor{red}{\textbf{Reading the problem once more?}}
+   \item step 1 => think greedy
+    \item step 2 => think dp
+    \item think greedy rather than overthinking!!
+    \item look into constraints to assume complexity
+    \item prefix, suffix, difference array
+    \item key-indexing
+    \item sorting using custom comparator
+    \item binary search
+    \item implementation
+    \item sieve
+    \item reverse way thinking
+    \item divide and conqueror tasks
+    \item power of map and other stl
+    \item combinations(bitmask)
+    \item comparing(min, max)
+    \item gcd/lcm
+    \item \texttt{upper\_bound}, \texttt{lower\_bound}
+    \item sliding window/two pointers
+    \item multiset/priority queue/stack/ordered set
+    \item rearranging to form equation
+    \item Sample I/O chcek to understand
+    \item handle base case and corner case
+    \item string related- create array of length 26
+    \item parity check
+    \item heavy light
+    \item finding independent subproblem
+    \item think end to start
+    \item pattern finding by dry run
+    \item take relative minimum such as 0
+    \item express in prime factorial
+    \item merge small tasks 
+    \item principle of inclusion-exclusion
+    \item inversion (a[i]>a[j]; i<j)
+    \item USE BRACKET to avoid PRECEDENCE ISSUE
+    \item small to large marging
+    \item use of XOR hashing/probability tricks
+    \item clear global array for multiple testcases
+    \item check typo, overflow, undefined behavior, additional information from the problem, function without return value, unsigned integer 
+    \item Stress testing
+    \item Algorithm:
+    \begin{itemize}
+        \item String- Hashing, Trie
+        \item Range Query: Seg, Mo, Sqrt dec, ordered set
+        \item Graph: dfs, bfs, dijkstra, Floyd
+    \end{itemize}
+    \item combo:
+    \begin{itemize}
+        \item seg tree + binary search + path compression
+    \end{itemize}
+    \item dp tricks:
+    \begin{itemize}
+        \item if bruteforce knapsack isn't optimal change state and redefine statement
+        \item space optimize by removing unnecessary states
+        \item digit dp, interval dp, bitmask dp, sos dp, probability dp
+    \end{itemize}
+
+\end{itemize}
+
 \kactlimport{Random.h}
 
 \section{Intervals}
@@ -7,22 +69,76 @@
 	\kactlimport{IntervalCover.h}
 	\kactlimport{ConstantIntervals.h}
 
-\section{Misc. algorithms}
+\section{Miscellaneous}
 	%\kactlimport{TernarySearch.h}
 	\kactlimport{LIS.h}
 	\kactlimport{FastKnapsack.h}
+    But actually we can do better. For the knapsack problem, it has at most $n$ items, and the
+sum of weights of all items is also at most $n$. We can do a sqrt decomposition trick here.
+
+\begin{itemize}
+  \item For items with weight $\geq \sqrt{n}$, there are at most $\sqrt{n}$ such items.
+  \item For items with weight $< \sqrt{n}$, we count the number of items for each different weight.
+  If there are $c_w$ items for weight $w$, we decompose $c_w$ into
+  \[
+     c_w = 2^0 + 2^1 + \dots + 2^k + y
+  \]
+  where $k$ is the largest integer satisfying $2^0 + 2^1 + \dots + 2^k \leq c_w$.
+  Then we create new items with weights
+  \[
+     2^0 \cdot w,\; 2^1 \cdot w,\; \dots,\; 2^k \cdot w,\; y \cdot w.
+  \]
+  The set of new items is the same as $c_w$ items with weight $w$ if we only consider the
+  different sum of weights the set of items can achieve. Now we only have
+  \[
+     \sum_{w=1}^{\sqrt{n}} \log(c_w) = \sqrt{n} \text{ items.}
+  \]
+\end{itemize}
+
+The total time complexity is
+\[
+   O(\sqrt{n} \cdot n + \sqrt{n} \cdot n) = O(n \sqrt{n}).
+\]
+	% \kactlimport{KnapsackOptimization.h}
+	\kactlimport{Triplet.h}
+	\kactlimport{Comparators.h}
+	\kactlimport{CoordinateCompression.h}
+	\kactlimport{VectorOps.h}
+	\kactlimport{BitOperations.h}
+	%\kactlimport{TupleOperations.h}
+	\kactlimport{ArrayOps.h}
+	\kactlimport{MatrixOperations.h}
+	\kactlimport{SubsetFormulas.h}
+
+\section{Formulas}
+
+\textbf{Arithmetic Sequence:}
+\[
+a_n = a + (n - 1)d
+\]
+\textbf{Sum of the First n Terms of an Arithmetic Series:}
+\[
+S_n = \frac{n}{2} \left[ 2a + (n - 1)d \right]
+\]
+
+\textbf{Geometric Sequence:}
+\[
+a_n = ar^{(n-1)}
+\]
+\textbf{Sum of the First n Terms of a Geometric Series:}
+\[
+S_n = \frac{a(1 - r^n)}{1 - r}
+\]
+\textbf{Sum of Infinite Terms of a Geometric Series (when \(|r| < 1\)):}
+\[
+S_\infty = \frac{a}{1 - r}
+\]
 
 \section{Dynamic programming}
 	\kactlimport{KnuthDP.h}
 	\kactlimport{DivideAndConquerDP.h}
-
-\section{Debugging tricks}
-	\begin{itemize}
-		\item \verb@signal(SIGSEGV, [](int) { _Exit(0); });@ converts segfaults into Wrong Answers.
-			Similarly one can catch SIGABRT (assertion failures) and SIGFPE (zero divisions).
-			\verb@_GLIBCXX_DEBUG@ failures generate SIGABRT (or SIGSEGV on gcc 5.4.0 apparently).
-		\item \verb@feenableexcept(29);@ kills the program on NaNs (\texttt 1), 0-divs (\texttt 4), infinities (\texttt 8) and denormals (\texttt{16}).
-	\end{itemize}
+	\kactlimport{SOSDP.h}
+	\kactlimport{DPPatterns.h}
 
 \section{Optimization tricks}
 	\verb@__builtin_ia32_ldmxcsr(40896);@ disables denormals (which make floats 20x slower near their minimum value).
@@ -39,11 +155,29 @@
 			\item \lstinline{#pragma GCC target ("avx2")} can double performance of vectorized code, but causes crashes on old machines.
 			\item \lstinline{#pragma GCC optimize ("trapv")} kills the program on integer overflows (but is really slow).
 		\end{itemize}
+
+\begin{enumerate}
+    \item
+    \begin{verbatim}
+    #pragma GCC target ("avx2")
+    #pragma GCC optimize("O3")
+    #pragma GCC optimize("unroll-loops")
+    \end{verbatim}
+
+    \item
+    \begin{verbatim}
+    #pragma GCC optimize("Ofast")
+    #pragma GCC target("avx,avx2,fma")
+    \end{verbatim}
+\end{enumerate}
+
 	\kactlimport{FastMod.h}
 	\kactlimport{FastInput.h}
-	\kactlimport{BumpAllocator.h}
-	\kactlimport{SmallPtr.h}
-	\kactlimport{BumpAllocatorSTL.h}
-	\kactlimport{Unrolling.h}
+	%\kactlimport{BumpAllocator.h}
+	%\kactlimport{SmallPtr.h}
+	%\kactlimport{BumpAllocatorSTL.h}
+	%\kactlimport{Unrolling.h}
 	% \kactlimport{SIMD.h}
-  \kactlimport{Polynomial-shohag.h}
+  % \kactlimport{Polynomial-shohag.h}
+	\kactlimport{NimSprague.h}
+	\kactlimport{SublimeConfig.h}

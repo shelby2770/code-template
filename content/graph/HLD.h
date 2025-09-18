@@ -1,65 +1,110 @@
 /**
- * Author: Benjamin Qi, Oleksandr Kulkov, chilli
- * Date: 2020-01-12
+ * Author: Istiaque
+ * Date: 2024
  * License: CC0
- * Source: https://codeforces.com/blog/entry/53170, https://github.com/bqi343/USACO/blob/master/Implementations/content/graphs%20(12)/Trees%20(10)/HLD%20(10.3).h
- * Description: Decomposes a tree into vertex disjoint heavy paths and light
- * edges such that the path from any leaf to the root contains at most log(n)
- * light edges. Code does additive modifications and max queries, but can
- * support commutative segtree modifications/queries on paths and subtrees.
- * Takes as input the full adjacency list. VALS\_EDGES being true means that
- * values are stored in the edges, as opposed to the nodes. All values
- * initialized to the segtree default. Root must be 0.
- * Time: O((\log N)^2)
- * Status: stress-tested against old HLD
+ * Source: User-provided
+ * Description: Heavy-Light Decomposition (HLD) for efficient path queries on trees.
+ * Decomposes a tree into paths where a path from any node to the root traverses at most log(n) paths.
+ * Usage: Process queries like finding max/min/sum on paths between nodes or updating node values.
+ * Time: O(log n) per query/update, O(n) for preprocessing
+ * Status: Tested
  */
-#pragma once
 
-#include "../data-structures/LazySegmentTree.h"
-
-template <bool VALS_EDGES> struct HLD {
-	int N, tim = 0;
-	vector<vi> adj;
-	vi par, siz, rt, pos;
-	Node *tree;
-	HLD(vector<vi> adj_)
-		: N(sz(adj_)), adj(adj_), par(N, -1), siz(N, 1),
-		  rt(N),pos(N),tree(new Node(0, N)){ dfsSz(0); dfsHld(0); }
-	void dfsSz(int v) {
-		for (int& u : adj[v]) {
-			adj[u].erase(find(all(adj[u]), v));
-			par[u] = v;
-			dfsSz(u);
-			siz[v] += siz[u];
-			if (siz[u] > siz[adj[v][0]]) swap(u, adj[v][0]);
-		}
-	}
-	void dfsHld(int v) {
-		pos[v] = tim++;
-		for (int u : adj[v]) {
-			rt[u] = (u == adj[v][0] ? rt[v] : u);
-			dfsHld(u);
-		}
-	}
-	template <class B> void process(int u, int v, B op) {
-		for (;; v = par[rt[v]]) {
-			if (pos[u] > pos[v]) swap(u, v);
-			if (rt[u] == rt[v]) break;
-			op(pos[rt[v]], pos[v] + 1);
-		}
-		op(pos[u] + VALS_EDGES, pos[v] + 1);
-	}
-	void modifyPath(int u, int v, int val) {
-		process(u, v, [&](int l, int r) { tree->add(l, r, val); });
-	}
-	int queryPath(int u, int v) { // Modify depending on problem
-		int res = -1e9;
-		process(u, v, [&](int l, int r) {
-				res = max(res, tree->query(l, r));
-		});
-		return res;
-	}
-	int querySubtree(int v) { // modifySubtree is similar
-		return tree->query(pos[v] + VALS_EDGES, pos[v] + siz[v]);
-	}
-};
+const int N = 2e5 + 9, LG = 18;
+ 
+struct ST {
+	//include SegmentTreeIterative.h
+} t;
+ 
+vector<int> g[N];
+int par[N][LG + 1], dep[N], sz[N];
+ 
+void dfs(int u, int p = 0) {
+  par[u][0] = p;
+  dep[u] = dep[p] + 1;
+  sz[u] = 1;
+  for (int i = 1; i <= LG; i++) par[u][i] = par[par[u][i - 1]][i - 1];
+  if (p) g[u].erase(find(g[u].begin(), g[u].end(), p));
+  for (auto &v: g[u])
+    if (v != p) {
+      dfs(v, u);
+      sz[u] += sz[v];
+      if (sz[v] > sz[g[u][0]]) swap(v, g[u][0]);
+    }
+}
+ 
+int lca(int u, int v) {
+  if (dep[u] < dep[v]) swap(u, v);
+  for (int k = LG; k >= 0; k--) if (dep[par[u][k]] >= dep[v]) u = par[u][k];
+  if (u == v) return u;
+  for (int k = LG; k >= 0; k--) if (par[u][k] != par[v][k]) u = par[u][k], v = par[v][k];
+  return par[u][0];
+}
+ 
+int kth(int u, int k) {
+  for (int i = 0; i <= LG; i++) if (k & (1 << i)) u = par[u][i];
+  return u;
+}
+ 
+int T, arr[N], head[N], st[N], en[N];
+ 
+void dfs_hld(int u) {
+  st[u] = ++T;
+  for (auto v: g[u]) {
+    head[v] = (v == g[u][0] ? head[u] : v);
+    dfs_hld(v);
+  }
+  en[u] = T;
+}
+ 
+int n, q;
+ 
+int query_up(int u, int v) {
+  int ans = 0;
+  while (head[u] != head[v]) {
+    ans = max(ans, t.query(st[head[u]], st[u]));
+    u = par[head[u]][0];
+  }
+  ans = max(ans, t.query(st[v], st[u]));
+  return ans;
+}
+ 
+int query(int u, int v) {
+  int l = lca(u, v);
+  int ans = query_up(u, l);
+  if (v != l) ans = max(ans, query_up(v, kth(v, dep[v] - dep[l] - 1)));
+  return ans;
+}
+ 
+signed main() {
+  cin.tie(0)->sync_with_stdio(0);
+  cin >> n >> q;
+  for (int i = 1; i <= n; ++i) cin >> arr[i];
+ 
+  for (int i = 1; i < n; ++i) {
+    int u, v;
+    cin >> u >> v;
+    g[u].push_back(v);
+    g[v].push_back(u);
+  }
+  dfs(1);
+  head[1] = 1;
+  dfs_hld(1);
+  t.n = n;
+  t.t.assign(2 * n + 1, 0);
+  for (int i = 1; i <= n; ++i) t.upd(st[i], arr[i]);
+  while (q--) {
+    int type;
+    cin >> type;
+    if (type == 1) {
+      int s, x;
+      cin >> s >> x;
+      t.upd(st[s], x);
+    }
+    else {
+      int a, b;
+      cin >> a >> b;
+      cout << query(a, b) << ' ';
+    }
+  }
+}

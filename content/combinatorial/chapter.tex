@@ -5,6 +5,8 @@
 		%\import{factorial.tex}
 		\kactlimport{IntPerm.h}
     \kactlimport{multinomial.h}
+    \kactlimport{PrecomputedNCR.h}
+    \kactlimport{Permutations.h}
 
 \textbf{Cycles} Let $g_S(n)$ be the number of $n$-permutations whose cycle lengths all belong to the set $S$. Then $\sum_{n\geq 0} g_S(n) \frac{x^n}{n!} = \exp\left(\sum_{n\in S} \frac{x^n} {n} \right)$\\
 \textbf{Derangements} Permutations of a set such that none of the elements appear in their original position. $\mkern-2mu D(n) = (n-1)(D(n-1)+D(n-2)) = n D(n-1)+(-1)^n = \left\lfloor\frac{n!}{e}\right\rceil$\\
